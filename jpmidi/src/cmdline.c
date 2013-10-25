@@ -29,6 +29,12 @@
 #include <jack/jack.h>
 #include <jack/transport.h>
 
+/* includes for server mode */
+#include <sys/types.h> 
+#include <sys/socket.h>
+#include <netinet/in.h>
+/* end include for server mode */
+
 #include "dump.h"
 #include "jpmidi.h"
 #include "main.h"
@@ -597,4 +603,83 @@ void cmdline()
 	/* execute commands until done */
 	command_loop();
 
+}
+
+/******** DOSTUFF() *********************
+ There is a separate instance of this function 
+ for each connection.  It handles all communication
+ once a connnection has been established.
+ *****************************************/
+void dostuff (int sock)
+{
+   int n;
+   char buffer[256];
+   char *cmd;
+      
+   bzero(buffer,256);
+   n = read(sock,buffer,255);
+   if (n < 0) perror("ERROR reading from socket");
+
+   // remove \n
+   strstr(buffer, "\n");
+   while ((cmd = strstr(buffer, "\n")) != NULL) {
+     int len = strlen(buffer);
+     memmove(cmd, cmd + 1, len); 
+   }
+
+   /* execute command */
+   //printf("Received command: %s\n",buffer);
+   add_history(buffer);
+   execute_command(buffer);
+
+   /* send ack */
+   n = write(sock,"ack",3);
+   if (n < 0) perror("ERROR writing to socket");
+}
+
+void tcpserver(int tcp_port)
+{
+     int sockfd, newsockfd, portno, pid;
+     socklen_t clilen;
+     struct sockaddr_in serv_addr, cli_addr;
+
+     printf("--Server Mode--\nListening on port %i\n",tcp_port);
+
+     if (tcp_port == 0) {
+         fprintf(stderr,"ERROR, no port provided\n");
+         exit(1);
+     }
+     sockfd = socket(AF_INET, SOCK_STREAM, 0);
+     if (sockfd < 0) 
+        perror("ERROR opening socket");
+     bzero((char *) &serv_addr, sizeof(serv_addr));
+     portno = tcp_port;
+     serv_addr.sin_family = AF_INET;
+     serv_addr.sin_addr.s_addr = INADDR_ANY;
+     serv_addr.sin_port = htons(portno);
+     if (bind(sockfd, (struct sockaddr *) &serv_addr,
+              sizeof(serv_addr)) < 0) 
+              perror("ERROR on binding");
+     listen(sockfd,5);
+     clilen = sizeof(cli_addr);
+     while (1) {
+         newsockfd = accept(sockfd, 
+               (struct sockaddr *) &cli_addr, &clilen);
+         if (newsockfd < 0) 
+             perror("ERROR on accept");
+         pid = fork();
+         if (pid < 0)
+             perror("ERROR on fork");
+         if (pid == 0)  {
+             close(sockfd);
+	     // redirect stdout to socket
+	     close(1);
+	     dup(newsockfd);
+	     //ready to serve
+             dostuff(newsockfd);
+             exit(0);
+         }
+         else close(newsockfd);
+     } /* end of while */
+     close(sockfd);
 }

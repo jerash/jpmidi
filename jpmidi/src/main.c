@@ -28,6 +28,7 @@
 static struct option long_opts[] = {
     {"version", 0, NULL, 'v'},
     {"disable-client", 0, NULL, 'd'},
+    {"server", 0, NULL, 's'},
     {0, 0, 0, 0},
 };
 
@@ -36,6 +37,8 @@ static struct option long_opts[] = {
 #define NELEM(a) ( sizeof(a)/sizeof((a)[0]) )
 
 static int be_jack_client = 1;
+static int be_server = 0;
+static int TCPPORT = 2013;
 static jpmidi_root_t* root;
 
 int main_is_jack_client()
@@ -50,7 +53,7 @@ jpmidi_root_t* main_get_jpmidi_root()
 
 int main(int argc, char **argv)
 {
-    char opts[NELEM(long_opts) * 2 + 1];
+    char opts[NELEM(long_opts) * 3 + 1];
     char *cp;
     int  c;
     struct option *op;
@@ -77,6 +80,9 @@ int main(int argc, char **argv)
         case 'd':
             be_jack_client = 0;
             break;
+	case 's':
+	    be_server = 1;
+	    break;
         default:
             main_showusage();
             exit(1);
@@ -118,7 +124,15 @@ int main(int argc, char **argv)
 
     if (be_jack_client && jackclient_activate()) return 1;
     
-    cmdline();
+    /* launch either command line or server mode */
+    if (be_server)
+    {
+	tcpserver(TCPPORT);
+    }
+    else
+    {
+	cmdline();
+    }
 
     if (be_jack_client && jackclient_deactivate()) return 1;
     if (be_jack_client && jackclient_close()) return 1;
@@ -137,6 +151,7 @@ void main_showusage()
         "OPTIONS:",
         "    --version or -v               - Show program version",
         "    --disable-client or -d        - Dont connect as a jack client",
+	"    --server or -s                - wait commands on TCP port 2013",
     };
 
     for (cpp = msg; cpp < msg+NELEM(msg); cpp++) {

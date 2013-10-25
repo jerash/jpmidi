@@ -29,6 +29,7 @@ extern "C" {
 
 
 void cmdline();
+void tcpserver(int tcp_port);
     
 #ifdef __cplusplus
 }
