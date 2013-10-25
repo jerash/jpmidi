@@ -11,3 +11,6 @@
 - Refactored the code for better encapsulation.
 - Added logic to send 'all sound off' on channels muted by solo/mute operations.
 
+### jpmidi-0.3 - October 25, 2013
+
+- add simple TCP server mode

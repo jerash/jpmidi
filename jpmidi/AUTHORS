@@ -1,4 +1,7 @@
-jpmidi is written and maintained by Ken Ellinwood (kellinwood@yahoo.com).
+jpmidi is  maintained by Raphaël Mouneyres (rmouneyres@gmail.com)
+
+---------------------------------------------------------------
+jpmidi was written by Ken Ellinwood (kellinwood@yahoo.com).
 
 The MIDI file parser was obtained from Steve Ratcliffe's pmidi source
 code (pmidi.sourceforge.net).
