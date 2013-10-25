@@ -1,0 +1,13 @@
+
+### jpmidi-0.1 - August 8, 2007
+
+- Initial release
+
+
+### jpmidi-0.2 - August 10, 2007
+
+- Fixed a problem linking with readline - unresolved symbols on FC6 (probably applies to other Red Hat distros).
+- Fixed several typos in configure.ac
+- Refactored the code for better encapsulation.
+- Added logic to send 'all sound off' on channels muted by solo/mute operations.
+

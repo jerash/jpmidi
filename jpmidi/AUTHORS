@@ -1,0 +1,7 @@
+jpmidi is written and maintained by Ken Ellinwood (kellinwood@yahoo.com).
+
+The MIDI file parser was obtained from Steve Ratcliffe's pmidi source
+code (pmidi.sourceforge.net).
+
+The command line interface is based on transport.c, the JACK
+transport master example client by Jack O'Quin.
