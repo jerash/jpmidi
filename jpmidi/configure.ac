@@ -1,11 +1,11 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_INIT(jpmidi, 0.2, kellinwood@yahoo.com)
+AC_INIT(jpmidi, 0.3.1, rmouneyres@gmail.com)
 AC_CONFIG_AUX_DIR(config)
 AC_CANONICAL_TARGET
 AC_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(jpmidi, 0.2)
+AM_INIT_AUTOMAKE(jpmidi, 0.3.1)
 AC_PREFIX_DEFAULT(/usr/local)
 
 # Checks for programs.
