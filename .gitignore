@@ -2,6 +2,9 @@
 autom4te.cache/
 .deps/
 
+#files
+config.log
+
 # Object files
 *.o
 *.ko
