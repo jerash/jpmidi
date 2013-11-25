@@ -19,6 +19,7 @@
 
 #include "jpmidi.h"
 #include "cmdline.h"
+#include "tcpserver.h"
 #include "dump.h"
 #include "main.h"
 #include "jackclient.h"

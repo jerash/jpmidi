@@ -14,3 +14,7 @@
 ### jpmidi-0.3 - October 25, 2013
 
 - add simple TCP server mode
+
+### jpmidi-0.3.1 - November 25, 2013
+
+- reorganise files to separate cmdline and tcpserver

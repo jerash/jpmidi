@@ -12,7 +12,9 @@ include_HEADERS =  \
 	main.h \
 	jackclient.h \
 	cmdline.h \
-	dump.h
+	dump.h \
+	commands.h \
+	tcpserver.h
 
 bin_PROGRAMS = jpmidi
 jpmidi_SOURCES =  \
@@ -24,5 +26,7 @@ jpmidi_SOURCES =  \
 	main.c \
 	jackclient.c \
 	cmdline.c \
-	dump.c
+	dump.c \
+	commands.c \
+	tcpserver.c
 
