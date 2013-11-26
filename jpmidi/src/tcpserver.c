@@ -63,7 +63,7 @@ static void clear_clients(Client *clients, int actual);
  for each connection.  It handles all communication
  once a connnection has been established.
  *****************************************/
-void do_command (char *buffer)
+unsigned char do_command (char *buffer)
 {
    char *cmd;
       
@@ -76,7 +76,13 @@ void do_command (char *buffer)
 
    /* execute command */
    printf("Received command: -- %s --\n",buffer);
-   execute_command(buffer);
+   if(strcmp(buffer,"shutdown")==0) {
+	return 1;
+   }
+   else {
+	execute_command(buffer);
+   }
+   return 0;
  }
 
 void send_ack(int sock)
@@ -101,10 +107,13 @@ static void app(int tcp_port)
    int max = sock;
    /* an array for all clients */
    Client clients[MAX_CLIENTS];
+   Client client;
+   
+   unsigned char running = 1; // server needs to run until exit
 
    fd_set rdfs;
 
-   while(1)
+   while(running)
    {
       int i = 0;
       FD_ZERO(&rdfs);
@@ -147,13 +156,6 @@ static void app(int tcp_port)
 
 	 printf("New client connection on socket %d \n",csock);
 
-         /* after connecting the client sends its name */
-         //if(read_client(csock, buffer) == -1)
-         //{
-            /* disconnected */
-         //   continue;
-         //}
-
          /* what is the new maximum fd ? */
          max = csock > max ? csock : max;
 
@@ -172,11 +174,11 @@ static void app(int tcp_port)
             /* a client is talking */
             if(FD_ISSET(clients[i].sock, &rdfs))
             {
-               Client client = clients[i];
+               client = clients[i];
                int c = read_client(clients[i].sock, buffer);
-               /* client disconnected */
                if(c == 0)
                {
+                  /* client disconnected */
                   closesocket(clients[i].sock);
                   remove_client(clients, i, &actual);
                   strncpy(buffer, client.name, BUF_SIZE - 1);
@@ -186,10 +188,9 @@ static void app(int tcp_port)
                else
                {
                   /* DOSTUFF*/
-		  //do_command(clients[i].sock, &buffer);
 		  printf("received buffer: %s \n",buffer);
-		  do_command((char*)&buffer);
-		  //send_message_to_all_clients(clients, client, actual, buffer, 0);
+		  if(do_command((char*)&buffer))
+			running=0;
                }
                break;
             }
@@ -197,6 +198,8 @@ static void app(int tcp_port)
       }
    }
 
+   send_message_to_all_clients(clients, client, actual, "jpmidi server shutdown", 0);
+   printf("jpmidi server shutdown\n");
    clear_clients(clients, actual);
    end_connection(sock);
 }
@@ -275,6 +278,7 @@ static int init_connection(int tcp_port)
 static void end_connection(int sock)
 {
    closesocket(sock);
+   printf("Socket %d closed\n",sock);
 }
 
 static int read_client(SOCKET sock, char *buffer)

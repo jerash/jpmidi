@@ -4,6 +4,7 @@ autom4te.cache/
 
 #files
 config.log
+jpmidi
 
 # Object files
 *.o
