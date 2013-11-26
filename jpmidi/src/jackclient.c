@@ -50,9 +50,10 @@ int jackclient_new(const char* client_name)
 {
     jackclient_cm_setup();
     
-    if((client = jack_client_new ( client_name)) == 0)
+    client = jack_client_open(client_name,JackNullOption,NULL);
+    if(client == NULL)
     {
-        fprintf (stderr, "jack server not running?\n");
+        fprintf (stderr, "cannot connect, jack server not running?\n");
         return 1;
     }
     jack_set_process_callback (client, process, 0);
