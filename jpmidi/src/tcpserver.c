@@ -22,7 +22,9 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
+#include <ctype.h> /* isalpla */
 #include "commands.h"
+#include "cmdline.h"
 
 /* includes for server mode */
 #include <sys/types.h> 
@@ -31,7 +33,7 @@
 #include <arpa/inet.h>
 #include <unistd.h> /* close */
 #include <netdb.h> /* gethostbyname */
-
+ 
 #define INVALID_SOCKET -1
 #define SOCKET_ERROR -1
 #define closesocket(s) close(s)
@@ -58,32 +60,48 @@ static void send_message_to_all_clients(Client *clients, Client client, int actu
 static void remove_client(Client *clients, int to_remove, int *actual);
 static void clear_clients(Client *clients, int actual);
 
-/******** DOSTUFF() *********************
- There is a separate instance of this function 
- for each connection.  It handles all communication
- once a connnection has been established.
- *****************************************/
-unsigned char do_command (char *buffer)
+/**** do_command()
+ There is a separate instance of this function for each client connection.
+ ****************/
+void cleanup_string(char *buffer)
 {
    char *cmd;
-      
-   // remove \n
-   strstr(buffer, "\n");
-   while ((cmd = strstr(buffer, "\n")) != NULL) {
-     int len = strlen(buffer);
-     memmove(cmd, cmd + 1, len); 
+   int len = strlen(buffer);
+
+   if (len > 0) {
+	int cur = 0;
+	while(cur <= len) {
+		if(isalnum(buffer[cur])==0) {
+			/*replace non alphanumeric character with space*/
+			buffer[cur] = ' ';
+		}
+		cur++;
+	}
+	buffer[len+1]='\0';
    }
 
-   /* execute command */
-   printf("Received command: -- %s --\n",buffer);
-   if(strcmp(buffer,"shutdown")==0) {
-	return 1;
-   }
-   else {
-	execute_command(buffer);
+   /* Remove leading and trailing whitespace from the line. */
+   cmd = stripwhite(buffer);
+   strcpy(buffer,cmd);
+}
+
+unsigned char do_command (char *buffer)
+{
+
+   cleanup_string(buffer);
+   /* If anything left, add to history and execute it. */
+   if (*buffer) {
+	/* execute command */
+	printf("Received command: -- %s --\n",buffer);
+	if(strcmp(buffer,"shutdown")==0) {
+		return 1;
+	}
+	else {
+		execute_command(buffer);
+	}
    }
    return 0;
- }
+}
 
 void send_ack(int sock)
 {

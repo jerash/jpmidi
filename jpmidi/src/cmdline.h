@@ -28,6 +28,7 @@ extern "C" {
 #endif
 
 void cmdline();
+char *stripwhite(char *string);
     
 #ifdef __cplusplus
 }
