@@ -118,9 +118,6 @@ static void app(int tcp_port)
       int i = 0;
       FD_ZERO(&rdfs);
 
-      /* add STDIN_FILENO */
-      //FD_SET(STDIN_FILENO, &rdfs);
-
       /* add the connection socket */
       FD_SET(sock, &rdfs);
 
@@ -136,13 +133,7 @@ static void app(int tcp_port)
          exit(errno);
       }
 
-      /* something from standard input : i.e keyboard */
-      if(FD_ISSET(STDIN_FILENO, &rdfs))
-      {
-         /* stop process when type on keyboard */
-         break;
-      }
-      else if(FD_ISSET(sock, &rdfs))
+      if(FD_ISSET(sock, &rdfs))
       {
          /* new client */
          SOCKADDR_IN csin = { 0 };
