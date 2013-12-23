@@ -163,7 +163,7 @@ static void app(int tcp_port)
             continue;
          }
 
-	 printf("New client connection on socket %d \n",csock);
+	      printf("New client connection on socket %d \n",csock);
 
          /* what is the new maximum fd ? */
          max = csock > max ? csock : max;
@@ -190,16 +190,17 @@ static void app(int tcp_port)
                   /* client disconnected */
                   closesocket(clients[i].sock);
                   remove_client(clients, i, &actual);
-                  strncpy(buffer, client.name, BUF_SIZE - 1);
-                  strncat(buffer, " disconnected !", BUF_SIZE - strlen(buffer) - 1);
+                  // strncpy(buffer, client.name, BUF_SIZE - 1);
+                  strncat(buffer, "\n client disconnected !\n", BUF_SIZE - strlen(buffer) - 1);
                   printf("%s",buffer);
+                  strcpy(buffer,"");
                }
                else
                {
                   /* DOSTUFF*/
-		  printf("received buffer: %s \n",buffer);
-		  if(do_command((char*)&buffer))
-			running=0;
+		             printf("received buffer: %s \n",buffer);
+		             if(do_command((char*)&buffer))
+			            running=0;
                }
                break;
             }
