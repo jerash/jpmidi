@@ -1,7 +1,8 @@
 AUTOMAKE_OPTIONS = foreign
 
 CFLAGS = -Wall 	$(GLIB_CFLAGS) -g
-LDFLAGS = $(GLIB_LIBS) -ljack -lreadline $(READLINE_DEPS) -g
+LIBS = $(GLIB_LIBS) -ljack -lreadline $(READLINE_DEPS)
+LDFLAGS = -g
 
 include_HEADERS =  \
 	elements.h \
