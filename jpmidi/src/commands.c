@@ -457,7 +457,7 @@ int execute_command(char *line)
 	if (!command) {
 		fprintf(stderr, "%s: No such command.  There is `help\'.\n",
 			word);
-		return;
+		return 0;
 	}
 
 	/* Return 1 to exit command line mode */
