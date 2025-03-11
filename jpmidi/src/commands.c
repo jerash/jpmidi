@@ -286,7 +286,7 @@ void com_dump(char* arg)
     int64_t tick = -1;
     jpmidi_root_t* root = main_get_jpmidi_root();
 
-    if (strlen(arg) > 0) sscanf( arg, "%lld %lld", &count, &tick);
+    if (strlen(arg) > 0) sscanf( arg, "%ld %ld", &count, &tick);
 
     // printf("count: %lld, tick: %lld\n", count, tick);
     
